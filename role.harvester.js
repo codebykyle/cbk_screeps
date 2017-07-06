@@ -33,11 +33,8 @@ module.exports = (creep) => {
             if (expansion) {
                 let depositResponse = creep.transfer(expansion, RESOURCE_ENERGY);
 
-                console.log('Deposit response: ', depositResponse);
-
                 if (depositResponse === ERR_NOT_IN_RANGE || depositResponse === -8) {
                     creep.moveTo(expansion);
-                    console.log('Moving to extension', creep);
                 }
             }
         },

@@ -32,6 +32,13 @@ module.exports = (creep) => {
                 // If we need energy, get energy
                 this.doGetEnergy();
             } else {
+                // If the controller gets downgraded, keep it at level 2
+                if (creep.room.controller.level === 1) {
+                    this.upgradeController();
+                    return;
+                }
+
+
                 // If there is a construction site, build it, otherwise, upgrade the controller
                 let constructionSite = this.findConstructionSite();
 

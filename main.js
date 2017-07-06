@@ -1,15 +1,12 @@
+let config = require('config');
+
 let creepCounter = require('module.counter');
 let creepFactory = require('factory.creeps');
 
 let roleHarvester = require('role.harvester');
 let roleBuilder = require('role.builder');
 let roleMaintenance = require('role.maintenance');
-
-
-const harvestersToSpawn = 5;
-const workerToSpawn = 3;
-const maintenanceToSpawn = 2;
-
+let roleRemoteHarvester = require('role.remoteHarvester');
 
 module.exports = {
     checkMissionCritical() {
@@ -18,8 +15,7 @@ module.exports = {
         // stop building and go to harvesting to ensure the chain doesn't stop
         if (Game.spawns['spawn01'].energy < 300) {
             let CreepCount = creepCounter().refreshData();
-
-            if (CreepCount.getTypeCount('harvester') < harvestersToSpawn - 1) {
+            if (CreepCount.getTypeCount('harvester') < config.HARVESTERS_TO_SPAWN - 1) {
                 console.log('Mission is critical');
                 return true;
             }
@@ -38,7 +34,9 @@ module.exports = {
                 break;
             case 'worker':
                 roleBuilder(creep).run();
-                // roleHarvester(creep).run();
+                break;
+            case 'remoteHarvester':
+                roleRemoteHarvester(creep).run();
                 break;
         }
     },
@@ -47,19 +45,23 @@ module.exports = {
         let CreepFactory = creepFactory();
         let CreepCount = creepCounter().refreshData();
 
-        if (CreepCount.getTypeCount('harvester') < harvestersToSpawn) {
-            console.log('Spawning harvester creep');
-            CreepFactory.harvesterCreep();
+        if (CreepCount.getTypeCount('harvester') < config.HARVESTERS_TO_SPAWN) {
+            console.log('Spawning harvester creep: ', CreepFactory.harvesterCreep());
+
         }
 
-        if (CreepCount.getTypeCount('worker') < workerToSpawn) {
-            console.log('Spawning worker creep');
-            CreepFactory.workerCreep();
+        if (CreepCount.getTypeCount('worker') < config.WORKERS_TO_SPAWN) {
+            console.log('Spawning worker creep: ', CreepFactory.workerCreep());
+
         }
 
-        if (CreepCount.getTypeCount('maintenance') < maintenanceToSpawn) {
-            console.log('Spawning maintenance creep');
-            CreepFactory.maintenanceCreep();
+        if (CreepCount.getTypeCount('maintenance') < config.MAINTENANCE_TO_SPAWN) {
+            console.log('Spawning maintenance creep: ', CreepFactory.maintenanceCreep());
+
+        }
+
+        if (CreepCount.getTypeCount('remoteHarvester') < config.REMOTE_HARVESTER_TO_SPAWN) {
+            console.log('Spawning remote harvester creep: ', CreepFactory.remoteHarvesterCreep());
         }
     },
 
