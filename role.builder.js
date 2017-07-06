@@ -1,12 +1,15 @@
+let energyManager = require('global.energyManager');
+
 module.exports = (creep) => {
+    let depositor = energyManager();
+
     return {
         needEnergy() {
             return creep.carry.energy === 0;
         },
 
         doGetEnergy() {
-            creep.moveTo(Game.spawns['spawn01']);
-            creep.withdraw(Game.spawns['spawn01'], RESOURCE_ENERGY);
+            depositor.getEnergy(creep, depositor.PRIORITIES.STORAGE);
         },
 
         findConstructionSite() {
@@ -37,7 +40,6 @@ module.exports = (creep) => {
                     this.upgradeController();
                     return;
                 }
-
 
                 // If there is a construction site, build it, otherwise, upgrade the controller
                 let constructionSite = this.findConstructionSite();

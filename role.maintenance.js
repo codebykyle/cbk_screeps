@@ -1,4 +1,8 @@
+let energyManager = require('global.energyManager');
+
 module.exports = (creep) => {
+    let depositor = energyManager();
+
     return {
         hasInventorySpace() {
             let usedSpace = _.sum(creep.carry);
@@ -27,20 +31,16 @@ module.exports = (creep) => {
             }
         },
 
-        depositToStorage() {
-            if (creep.transfer(Game.spawns['spawn01'], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-                console.log('Depositing to storage');
-                creep.moveTo(Game.spawns['spawn01']);
-            }
-        },
-
         needEnergy() {
             return creep.carry.energy === 0;
         },
 
         doGetEnergy() {
-            creep.moveTo(Game.spawns['spawn01']);
-            creep.withdraw(Game.spawns['spawn01'], RESOURCE_ENERGY);
+            depositor.getEnergy(creep, depositor.PRIORITIES.SPAWN);
+        },
+
+        depositToStorage() {
+            depositor.depositEnergy(creep, depositor.PRIORITIES.SPAWN);
         },
 
         run() {

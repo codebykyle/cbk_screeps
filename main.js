@@ -1,19 +1,20 @@
 let config = require('config');
 
-let creepCounter = require('module.counter');
+let creepCounter = require('global.counter');
 let creepFactory = require('factory.creeps');
 
 let roleHarvester = require('role.harvester');
 let roleBuilder = require('role.builder');
 let roleMaintenance = require('role.maintenance');
 let roleRemoteHarvester = require('role.remoteHarvester');
+let roleWallUpgrader = require('role.wallUpgrader');
 
 module.exports = {
     checkMissionCritical() {
         // There might be a situation where we're not able to create additional harvesters
         // If we are building a lot, and never reach the energy to build an additional harvester to keep everything going
         // stop building and go to harvesting to ensure the chain doesn't stop
-        if (Game.spawns['spawn01'].energy < 300) {
+        if (Game.spawns['spawn01'].room.energyAvailable < 300) {
             let CreepCount = creepCounter().refreshData();
             if (CreepCount.getTypeCount('harvester') < config.HARVESTERS_TO_SPAWN - 1) {
                 console.log('Mission is critical');
@@ -38,6 +39,9 @@ module.exports = {
             case 'remoteHarvester':
                 roleRemoteHarvester(creep).run();
                 break;
+            case 'wallUpgrader':
+                roleWallUpgrader(creep).run();
+                break
         }
     },
 
@@ -47,21 +51,14 @@ module.exports = {
 
         if (CreepCount.getTypeCount('harvester') < config.HARVESTERS_TO_SPAWN) {
             console.log('Spawning harvester creep: ', CreepFactory.harvesterCreep());
-
-        }
-
-        if (CreepCount.getTypeCount('worker') < config.WORKERS_TO_SPAWN) {
+        } else if (CreepCount.getTypeCount('worker') < config.WORKERS_TO_SPAWN) {
             console.log('Spawning worker creep: ', CreepFactory.workerCreep());
-
-        }
-
-        if (CreepCount.getTypeCount('maintenance') < config.MAINTENANCE_TO_SPAWN) {
+        } else if (CreepCount.getTypeCount('maintenance') < config.MAINTENANCE_TO_SPAWN) {
             console.log('Spawning maintenance creep: ', CreepFactory.maintenanceCreep());
-
-        }
-
-        if (CreepCount.getTypeCount('remoteHarvester') < config.REMOTE_HARVESTER_TO_SPAWN) {
+        } else if (CreepCount.getTypeCount('remoteHarvester') < config.REMOTE_HARVESTER_TO_SPAWN) {
             console.log('Spawning remote harvester creep: ', CreepFactory.remoteHarvesterCreep());
+        } else if (CreepCount.getTypeCount('wallUpgrader') < config.WALL_UPGRADERS_TO_SPAWN) {
+            console.log('Spawning wall upgrader creep: ', creepFactory().wallUpgraderCreep());
         }
     },
 

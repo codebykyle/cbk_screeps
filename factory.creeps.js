@@ -36,13 +36,13 @@ module.exports = () => {
         },
 
         workerCreep() {
-            return Game.spawns['spawn01'].createCreep([WORK, CARRY, CARRY, MOVE, MOVE, MOVE], null, {
+            return Game.spawns['spawn01'].createCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE], null, {
                 role: 'worker',
             });
         },
 
         harvesterCreep() {
-            return Game.spawns['spawn01'].createCreep([WORK, WORK, WORK, CARRY, CARRY, MOVE], null, {
+            return Game.spawns['spawn01'].createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE], null, {
                 role: 'harvester',
             });
         },
@@ -54,9 +54,15 @@ module.exports = () => {
         },
 
         remoteHarvesterCreep() {
-            return Game.spawns['spawn01'].createCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], null, {
+            return Game.spawns['spawn01'].createCreep([WORK, CARRY, CARRY, MOVE, MOVE, MOVE], null, {
                 role: 'remoteHarvester',
             });
         },
+
+        wallUpgraderCreep() {
+            return Game.spawns['spawn01'].createCreep([WORK, CARRY, MOVE], null, {
+                role: 'wallUpgrader'
+            });
+        }
     }
 };

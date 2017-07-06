@@ -1,6 +1,10 @@
 let config = require('config');
+let energyManager = require('global.energyManager');
 
 module.exports = (creep) => {
+    let depositor = energyManager();
+
+
     return {
         inTargetRoom() {
             return creep.room.name === config.REMOTE_HARVEST_ROOM;
@@ -12,43 +16,20 @@ module.exports = (creep) => {
 
         moveToTargetRoom() {
             let exit = creep.room.findExitTo(config.REMOTE_HARVEST_ROOM);
-            creep.moveTo(creep.pos.findClosestByPath(exit));
+            creep.moveTo(creep.pos.findClosestByRange(exit));
         },
 
         moveToHomeRoom() {
             let exit = creep.room.findExitTo(config.HOME_ROOM);
-            creep.moveTo(creep.pos.findClosestByPath(exit));
+            creep.moveTo(creep.pos.findClosestByRange(exit));
         },
 
         hasInventorySpace() {
             return creep.carry.energy < creep.carryCapacity;
         },
 
-        canTransferToSpawn() {
-            return Game.spawns['spawn01'].energy < Game.spawns['spawn01'].energyCapacity;
-        },
-
-        depositToSpawn() {
-            if (creep.transfer(Game.spawns['spawn01'], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(Game.spawns['spawn01']);
-            }
-        },
-
-        depositToExtension() {
-            let expansion = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
-                filter:(structure) => {
-                    return  (structure.structureType === STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity
-                }
-            });
-
-
-            if (expansion) {
-                let depositResponse = creep.transfer(expansion, RESOURCE_ENERGY);
-
-                if (depositResponse === ERR_NOT_IN_RANGE || depositResponse === -8) {
-                    creep.moveTo(expansion);
-                }
-            }
+        depositEnergy(){
+            depositor.depositEnergy(creep, depositor.PRIORITIES.STORAGE);
         },
 
         doHarvest() {
@@ -70,11 +51,7 @@ module.exports = (creep) => {
                 if (!this.inHomeRoom()) {
                     this.moveToHomeRoom();
                 } else {
-                    if (this.canTransferToSpawn()) {
-                        this.depositToSpawn();
-                    } else if (!this.canTransferToSpawn()) {
-                        this.depositToExtension();
-                    }
+                    this.depositEnergy();
                 }
             }
         },
