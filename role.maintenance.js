@@ -31,12 +31,24 @@ module.exports = (creep) => {
             }
         },
 
+        findEmptyTurret() {
+            return creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: (s) => s.structureType === STRUCTURE_TOWER && s.energy < s.energyCapacity
+            });
+        },
+
+        fillTurret(turret) {
+            if(creep.transfer(turret, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+                creep.moveTo(turret);
+            }
+        },
+
         needEnergy() {
             return creep.carry.energy === 0;
         },
 
         doGetEnergy() {
-            depositor.getEnergy(creep, depositor.PRIORITIES.SPAWN);
+            depositor.getEnergy(creep, depositor.PRIORITIES.STORAGE_ONLY);
         },
 
         depositToStorage() {
@@ -46,7 +58,7 @@ module.exports = (creep) => {
         run() {
             let droppedResource = this.findDroppedResource();
             let repairStructure = this.findRepairTarget();
-
+            let emptyTurret = this.findEmptyTurret();
 
             // If there are dropped resources, grab them
             // Otherwise repair broken structures
@@ -61,6 +73,12 @@ module.exports = (creep) => {
                     this.doGetEnergy();
                 } else {
                     this.repairStructure(repairStructure);
+                }
+            } else if (emptyTurret) {
+                if (this.needEnergy()){
+                    this.doGetEnergy();
+                } else {
+                    this.fillTurret(emptyTurret)
                 }
             }
         }

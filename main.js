@@ -14,13 +14,13 @@ module.exports = {
         // There might be a situation where we're not able to create additional harvesters
         // If we are building a lot, and never reach the energy to build an additional harvester to keep everything going
         // stop building and go to harvesting to ensure the chain doesn't stop
-        if (Game.spawns['spawn01'].room.energyAvailable < 300) {
-            let CreepCount = creepCounter().refreshData();
-            if (CreepCount.getTypeCount('harvester') < config.HARVESTERS_TO_SPAWN - 1) {
-                console.log('Mission is critical');
-                return true;
-            }
+        // if (Game.spawns['spawn01'].room.energyAvailable < 300) {
+        let CreepCount = creepCounter().refreshData();
+        if (CreepCount.getTypeCount('harvester') < config.HARVESTERS_TO_SPAWN - 2) {
+            console.log('Mission is critical');
+            return true;
         }
+        // }
 
         return false;
     },

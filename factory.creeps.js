@@ -42,7 +42,7 @@ module.exports = () => {
         },
 
         harvesterCreep() {
-            return Game.spawns['spawn01'].createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE], null, {
+            return Game.spawns['spawn01'].createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], null, {
                 role: 'harvester',
             });
         },

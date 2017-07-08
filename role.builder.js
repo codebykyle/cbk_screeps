@@ -9,7 +9,7 @@ module.exports = (creep) => {
         },
 
         doGetEnergy() {
-            depositor.getEnergy(creep, depositor.PRIORITIES.STORAGE);
+            depositor.getEnergy(creep, depositor.PRIORITIES.STORAGE_ONLY);
         },
 
         findConstructionSite() {
@@ -36,7 +36,7 @@ module.exports = (creep) => {
                 this.doGetEnergy();
             } else {
                 // If the controller gets downgraded, keep it at level 2
-                if (creep.room.controller.level === 1) {
+                if (creep.room.controller.level < 3) {
                     this.upgradeController();
                     return;
                 }

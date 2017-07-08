@@ -1,6 +1,8 @@
-// this creep is a round-robin approach to upgrading walls based on the average of the room
+let energyManager = require('global.energyManager');
 
 module.exports = (creep) => {
+    let depositor = energyManager();
+
     return {
         getWallAverage() {
             let walls = creep.room.find(FIND_STRUCTURES, {
@@ -21,8 +23,7 @@ module.exports = (creep) => {
         },
 
         doGetEnergy() {
-            creep.moveTo(Game.spawns['spawn01']);
-            creep.withdraw(Game.spawns['spawn01'], RESOURCE_ENERGY);
+            depositor.getEnergy(creep, depositor.PRIORITIES.STORAGE_ONLY)
         },
 
         upgradeWall(wall) {

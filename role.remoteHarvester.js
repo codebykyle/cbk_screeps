@@ -6,6 +6,22 @@ module.exports = (creep) => {
 
 
     return {
+        setIsWorking(value) {
+            creep.memory.isWorking = value;
+        },
+
+        getIsWorking() {
+            return creep.memory.isWorking;
+        },
+
+        isInventoryFull() {
+            return creep.carry.energy === creep.carryCapacity;
+        },
+
+        isInventoryEmpty() {
+            return creep.carry.energy === 0;
+        },
+
         inTargetRoom() {
             return creep.room.name === config.REMOTE_HARVEST_ROOM;
         },
@@ -24,10 +40,6 @@ module.exports = (creep) => {
             creep.moveTo(creep.pos.findClosestByRange(exit));
         },
 
-        hasInventorySpace() {
-            return creep.carry.energy < creep.carryCapacity;
-        },
-
         depositEnergy(){
             depositor.depositEnergy(creep, depositor.PRIORITIES.STORAGE);
         },
@@ -41,7 +53,14 @@ module.exports = (creep) => {
 
 
         run() {
-            if (this.hasInventorySpace()) {
+            if (this.isInventoryFull()) {
+                this.setIsWorking(false);
+            } else if(this.isInventoryEmpty()) {
+                this.setIsWorking(true);
+            }
+
+
+            if (this.getIsWorking()) {
                 if (this.inTargetRoom()) {
                     this.doHarvest();
                 } else {

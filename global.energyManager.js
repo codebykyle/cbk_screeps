@@ -46,8 +46,6 @@ module.exports = () => {
             }
         });
 
-        console.log(JSON.stringify(storage));
-
         if (storage) {
             creepDepositEnergy(creep, storage);
             return true;
@@ -89,8 +87,6 @@ module.exports = () => {
             }
         });
 
-        console.log('Getting energy from storage: ', JSON.stringify(storage));
-
         if (storage) {
             creepWithdrawEnergy(creep, storage);
             return true;
@@ -100,7 +96,7 @@ module.exports = () => {
     };
 
     return {
-        PRIORITIES: { SPAWN: 1, STORAGE: 2 },
+        PRIORITIES: { SPAWN: 1, STORAGE: 2, SPAWN_ONLY: 3, STORAGE_ONLY:4 },
 
         getEnergy(creep, priority=this.PRIORITIES.SPAWN) {
             switch(priority) {
@@ -109,6 +105,12 @@ module.exports = () => {
                     break;
                 case this.PRIORITIES.STORAGE:
                     if (!getEnergyFromStorage(creep)) { getEnergyFromSpawn(creep) }
+                    break;
+                case this.PRIORITIES.STORAGE_ONLY:
+                    getEnergyFromStorage(creep);
+                    break;
+                case this.PRIORITIES.SPAWN_ONLY:
+                    getEnergyFromSpawn(creep);
                     break;
                 default:
                     if (!getEnergyFromSpawn(creep)) { getEnergyFromStorage(creep) }
@@ -123,6 +125,12 @@ module.exports = () => {
                     break;
                 case this.PRIORITIES.STORAGE:
                     if (!depositEnergyToStorage(creep)) { depositEnergyToSpawn(creep) }
+                    break;
+                case this.PRIORITIES.SPAWN_ONLY:
+                    depositEnergyToSpawn(creep);
+                    break;
+                case this.PRIORITIES.STORAGE_ONLY:
+                    depositEnergyToStorage(creep);
                     break;
                 default:
                     if (!depositEnergyToSpawn(creep)) { depositEnergyToStorage(creep)}
