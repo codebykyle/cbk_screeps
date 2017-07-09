@@ -8,6 +8,7 @@ let roleBuilder = require('role.builder');
 let roleMaintenance = require('role.maintenance');
 let roleRemoteHarvester = require('role.remoteHarvester');
 let roleWallUpgrader = require('role.wallUpgrader');
+let roleAttacker = require('role.attacker');
 
 module.exports = {
     checkMissionCritical() {
@@ -36,12 +37,18 @@ module.exports = {
             case 'worker':
                 roleBuilder(creep).run();
                 break;
-            case 'remoteHarvester':
-                roleRemoteHarvester(creep).run();
+            case 'remoteHarvesterEast':
+                roleRemoteHarvester(creep, config.REMOTE_HARVEST_EAST_ROOM).run();
+                break;
+            case 'remoteHarvesterNorth':
+                roleRemoteHarvester(creep, config.REMOTE_HARVEST_NORTH_ROOM).run();
                 break;
             case 'wallUpgrader':
                 roleWallUpgrader(creep).run();
-                break
+                break;
+            case 'attacker':
+                roleAttacker(creep).run();
+                break;
         }
     },
 
@@ -55,10 +62,14 @@ module.exports = {
             console.log('Spawning worker creep: ', CreepFactory.workerCreep());
         } else if (CreepCount.getTypeCount('maintenance') < config.MAINTENANCE_TO_SPAWN) {
             console.log('Spawning maintenance creep: ', CreepFactory.maintenanceCreep());
-        } else if (CreepCount.getTypeCount('remoteHarvester') < config.REMOTE_HARVESTER_TO_SPAWN) {
-            console.log('Spawning remote harvester creep: ', CreepFactory.remoteHarvesterCreep());
+        } else if (CreepCount.getTypeCount('remoteHarvesterEast') < config.REMOTE_HARVESTER_EAST_TO_SPAWN) {
+            console.log('Spawning remote harvester (east) creep: ', CreepFactory.remoteHarvesterEastCreep());
+        } else if (CreepCount.getTypeCount('remoteHarvesterEast') < config.REMOTE_HARVESTER_NORTH_TO_SPAWN) {
+            console.log('Spawning remote harvester (north) creep: ', CreepFactory.remoteHarvesterNorthCreep());
         } else if (CreepCount.getTypeCount('wallUpgrader') < config.WALL_UPGRADERS_TO_SPAWN) {
-            console.log('Spawning wall upgrader creep: ', creepFactory().wallUpgraderCreep());
+            console.log('Spawning wall upgrader creep: ', CreepFactory.wallUpgraderCreep());
+        } else if (CreepCount.getTypeCount('attacker') < config.ATTACKERS_TO_SPAWN) {
+            console.log('Spawning attacker creep: ', CreepFactory.attackerCreep())
         }
     },
 
@@ -73,7 +84,11 @@ module.exports = {
             if (!isMissionCritical) {
                 this.assignCreepRole(creep);
             } else {
-                roleHarvester(creep).run();
+                if(creep.memory.role !== 'attacker') {
+                    roleHarvester(creep).run();
+                } else {
+                    this.assignCreepRole(creep)
+                }
             }
         })
     },

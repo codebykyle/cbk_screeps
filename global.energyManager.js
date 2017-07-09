@@ -42,7 +42,7 @@ module.exports = () => {
     let depositEnergyToStorage = (creep) => {
         let storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter:(structure) => {
-                return (structure.structureType === STRUCTURE_CONTAINER) && _.sum(structure.store) < structure.storeCapacity;
+                return (structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_STORAGE) && _.sum(structure.store) < structure.storeCapacity;
             }
         });
 
@@ -83,7 +83,7 @@ module.exports = () => {
     let getEnergyFromStorage = (creep) => {
         let storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter:(structure) => {
-                return (structure.structureType === STRUCTURE_CONTAINER) && structure.store.hasOwnProperty('energy') && structure.store.energy > 0;
+                return (structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_STORAGE) && structure.store.hasOwnProperty('energy') && structure.store.energy > 0;
             }
         });
 

@@ -1,61 +1,95 @@
 
 
 module.exports = () => {
-    return {
-        // getBalancedBodyParts(energy) {
-        //     let bodyParts = [];
-        //     let tmpEnergy = energy;
-        //
-        //     if (tmpEnergy >= 200) {
-        //         while(tmpEnergy >= 51) {
-        //             if (tmpEnergy >= BODYPART_COST.move) {
-        //                 bodyParts.push(WORK);
-        //                 tmpEnergy -= BODYPART_COST.move;
-        //             }
-        //
-        //             if (tmpEnergy >= BODYPART_COST.carry) {
-        //                 bodyParts.push(CARRY);
-        //                 tmpEnergy -= BODYPART_COST.carry
-        //             }
-        //
-        //             if (tmpEnergy >= BODYPART_COST.move) {
-        //                 bodyParts.push(MOVE);
-        //                 tmpEnergy -= BODYPART_COST.move;
-        //             }
-        //             console.log([bodyParts, tmpEnergy]);
-        //         }
-        //     } else {
-        //         bodyParts = [WORK, WORK, MOVE, CARRY];
-        //     }
-        //
-        //     return bodyParts;
-        // },
 
-        getAvailableEnergy() {
-            return Game.spawns['spawn01'].room.energyAvailable;
+    let getBalancedBodyParts = (energy) => {
+        let bodyParts = [];
+        let tmpEnergy = energy;
+
+        while (tmpEnergy > 0) {
+            if (tmpEnergy > 0 && tmpEnergy >= BODYPART_COST.work) {
+                bodyParts.push(WORK);
+                tmpEnergy -= BODYPART_COST.work;
+            }
+
+            if (tmpEnergy > 0 && tmpEnergy >= BODYPART_COST.move) {
+                bodyParts.push(MOVE);
+                tmpEnergy -= BODYPART_COST.move;
+            }
+
+            if (tmpEnergy > 0 && tmpEnergy >= BODYPART_COST.carry) {
+                bodyParts.push(CARRY);
+                tmpEnergy -= BODYPART_COST.carry;
+            }
+        }
+
+        console.log(JSON.stringify(bodyParts));
+
+        return bodyParts;
+    };
+
+    let getAttackerBodyParts = (energy) => {
+        let bodyParts = [];
+        let tmpEnergy = energy;
+
+        while(tmpEnergy > 0) {
+            if (tmpEnergy > 0 && tmpEnergy >= BODYPART_COST.move) {
+                bodyParts.push(MOVE);
+                tmpEnergy -= BODYPART_COST.move;
+            }
+
+            if (tmpEnergy > 0 && tmpEnergy >= BODYPART_COST.attack) {
+                bodyParts.push(ATTACK);
+                tmpEnergy -= BODYPART_COST.attack;
+            }
+
+            if (tmpEnergy > 0 && tmpEnergy >= BODYPART_COST.tough) {
+                bodyParts.push(TOUGH);
+                tmpEnergy -= BODYPART_COST.tough;
+            }
+        }
+
+        return bodyParts;
+    };
+
+    let getMaxCapacity = () => {
+        return Game.spawns['spawn01'].room.energyCapacityAvailable;
+    };
+
+    return {
+        attackerCreep() {
+            return Game.spawns['spawn01'].createCreep(getAttackerBodyParts(getMaxCapacity()), null, {
+                role: 'attacker'
+            });
         },
 
         workerCreep() {
-            return Game.spawns['spawn01'].createCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE], null, {
+            return Game.spawns['spawn01'].createCreep(getBalancedBodyParts(getMaxCapacity()), null, {
                 role: 'worker',
             });
         },
 
         harvesterCreep() {
-            return Game.spawns['spawn01'].createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], null, {
+            return Game.spawns['spawn01'].createCreep(getBalancedBodyParts(getMaxCapacity()), null, {
                 role: 'harvester',
             });
         },
 
         maintenanceCreep() {
-            return Game.spawns['spawn01'].createCreep([WORK, CARRY, CARRY, MOVE, MOVE, MOVE], null, {
+            return Game.spawns['spawn01'].createCreep(getBalancedBodyParts(getMaxCapacity()), null, {
                 role: 'maintenance',
             });
         },
 
-        remoteHarvesterCreep() {
-            return Game.spawns['spawn01'].createCreep([WORK, CARRY, CARRY, MOVE, MOVE, MOVE], null, {
-                role: 'remoteHarvester',
+        remoteHarvesterEastCreep() {
+            return Game.spawns['spawn01'].createCreep(getBalancedBodyParts(getMaxCapacity()), null, {
+                role: 'remoteHarvesterEast',
+            });
+        },
+
+        remoteHarvesterNorthCreep() {
+            return Game.spawns['spawn01'].createCreep(getBalancedBodyParts(getMaxCapacity()), null, {
+                role: 'remoteHarvesterNorth',
             });
         },
 

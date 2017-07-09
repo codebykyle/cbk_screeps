@@ -1,7 +1,7 @@
 let config = require('config');
 let energyManager = require('global.energyManager');
 
-module.exports = (creep) => {
+module.exports = (creep, targetRoom) => {
     let depositor = energyManager();
 
 
@@ -23,7 +23,7 @@ module.exports = (creep) => {
         },
 
         inTargetRoom() {
-            return creep.room.name === config.REMOTE_HARVEST_ROOM;
+            return creep.room.name === targetRoom;
         },
 
         inHomeRoom() {
@@ -31,7 +31,7 @@ module.exports = (creep) => {
         },
 
         moveToTargetRoom() {
-            let exit = creep.room.findExitTo(config.REMOTE_HARVEST_ROOM);
+            let exit = creep.room.findExitTo(targetRoom);
             creep.moveTo(creep.pos.findClosestByRange(exit));
         },
 
@@ -45,8 +45,15 @@ module.exports = (creep) => {
         },
 
         doHarvest() {
-            let source = creep.pos.findClosestByPath(FIND_SOURCES);
-            if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
+            let source = creep.pos.findClosestByPath(FIND_SOURCES, {
+                filter: (source) => source.energy > 0
+            });
+
+            let harvestResponse = creep.harvest(source);
+
+            console.log(harvestResponse);
+
+            if (harvestResponse === ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
             }
         },
